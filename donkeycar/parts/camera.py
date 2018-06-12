@@ -10,7 +10,7 @@ class BaseCamera:
         return self.frame
 
 class PiCamera(BaseCamera):
-    def __init__(self, resolution=(120, 160), framerate=20):
+    def __init__(self, resolution=(120, 160), framerate=20, zoom=(0.0, 0.0, 1.0, 1.0)):
         from picamera.array import PiRGBArray
         from picamera import PiCamera
         resolution = (resolution[1], resolution[0])
@@ -18,6 +18,7 @@ class PiCamera(BaseCamera):
         self.camera = PiCamera() #PiCamera gets resolution (height, width)
         self.camera.resolution = resolution
         self.camera.framerate = framerate
+        self.camera.zoom = zoom
         self.rawCapture = PiRGBArray(self.camera, size=resolution)
         self.stream = self.camera.capture_continuous(self.rawCapture,
             format="rgb", use_video_port=True)
@@ -133,7 +134,7 @@ class ImageListCamera(BaseCamera):
     '''
     def __init__(self, path_mask='~/d2/data/**/*.jpg'):
         self.image_filenames = glob.glob(os.path.expanduser(path_mask), recursive=True)
-    
+
         def get_image_index(fnm):
             sl = os.path.basename(fnm).split('_')
             return int(sl[0])

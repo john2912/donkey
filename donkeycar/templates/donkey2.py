@@ -39,7 +39,7 @@ def drive(cfg, model_path=None, use_joystick=False):
 
     #Initialize car
     V = dk.vehicle.Vehicle()
-    cam = PiCamera(resolution=cfg.CAMERA_RESOLUTION)
+    cam = PiCamera(resolution=cfg.CAMERA_RESOLUTION, zoom=cfg.CAMERA_ZOOM)
     V.add(cam, outputs=['cam/image_array'], threaded=True)
     
     if use_joystick or cfg.USE_JOYSTICK_AS_DEFAULT:
@@ -71,11 +71,12 @@ def drive(cfg, model_path=None, use_joystick=False):
     V.add(pilot_condition_part, inputs=['user/mode'], outputs=['run_pilot'])
     
     #Run the pilot if the mode is not user.
-    kl = KerasCategorical()
+    from donkeycar.parts.keras import default_categorical_zoomed
+    kl = KerasCategorical(model=default_categorical_zoomed())
     if model_path:
         kl.load(model_path)
     
-    V.add(kl, inputs=['cam/image_array'], 
+    V.add(kl, inputs=['cam/image_array'],
           outputs=['pilot/angle', 'pilot/throttle'],
           run_condition='run_pilot')
     
@@ -141,7 +142,8 @@ def train(cfg, tub_names, model_name):
         record['user/angle'] = dk.utils.linear_bin(record['user/angle'])
         return record
 
-    kl = KerasCategorical()
+    from donkeycar.parts.keras import default_categorical_zoomed
+    kl = KerasCategorical(model=default_categorical_zoomed())
     print('tub_names', tub_names)
     if not tub_names:
         tub_names = os.path.join(cfg.DATA_PATH, '*')
