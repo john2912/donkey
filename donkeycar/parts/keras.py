@@ -84,6 +84,30 @@ class KerasCategorical(KerasPilot):
         angle_unbinned = dk.utils.linear_unbin(angle_binned)
         return angle_unbinned, throttle[0][0]
     
+class KerasCategoricalLinearSpeed(KerasPilot):
+    def __init__(self, model=None, *args, **kwargs):
+        super(KerasCategoricalLinearSpeed, self).__init__(*args, **kwargs)
+        if model:
+            self.model = model
+        else:
+            self.model = default_categorical()
+        
+    def run(self, img_arr):
+        img_arr = img_arr.reshape((1,) + img_arr.shape)
+        angle_binned, throttle = self.model.predict(img_arr)
+        #print('throttle', throttle)
+        #angle_certainty = max(angle_binned[0])
+        angle_unbinned = dk.utils.linear_unbin(angle_binned)
+        return angle_unbinned, self.compute_throttle(angle_unbinned)
+
+    def compute_throttle(self, angle_binned):
+        throttle = abs(1 - angle_binned)
+        # TODO(r7vme): Make this configurable.
+        if throttle <= 0.3:
+            throttle == 0.3
+        if throttle >= 0.6:
+            throttle == 0.6
+        return throttle
     
     
 class KerasLinear(KerasPilot):
@@ -341,3 +365,4 @@ def default_categorical_zoomed():
                   loss_weights={'angle_out': 0.9, 'throttle_out': .001})
 
     return model
+

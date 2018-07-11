@@ -19,7 +19,7 @@ import donkeycar as dk
 #import parts
 from donkeycar.parts.camera import PiCamera
 from donkeycar.parts.transform import Lambda
-from donkeycar.parts.keras import KerasCategorical
+from donkeycar.parts.keras import KerasCategoricalLinearSpeed
 from donkeycar.parts.actuator import PCA9685, PWMSteering, PWMThrottle
 from donkeycar.parts.datastore import TubHandler, TubGroup
 from donkeycar.parts.controller import LocalWebController, JoystickController
@@ -72,7 +72,8 @@ def drive(cfg, model_path=None, use_joystick=False):
     
     #Run the pilot if the mode is not user.
     from donkeycar.parts.keras import default_categorical_zoomed
-    kl = KerasCategorical(model=default_categorical_zoomed())
+    #kl = KerasCategorical(model=default_categorical_zoomed())
+    kl = KerasCategoricalLinearSpeed(model=default_categorical_zoomed())
     if model_path:
         kl.load(model_path)
     
@@ -143,7 +144,7 @@ def train(cfg, tub_names, model_name):
         return record
 
     from donkeycar.parts.keras import default_categorical_zoomed
-    kl = KerasCategorical(model=default_categorical_zoomed())
+    kl = KerasCategoricalLinearSpeed(model=default_categorical_zoomed())
     print('tub_names', tub_names)
     if not tub_names:
         tub_names = os.path.join(cfg.DATA_PATH, '*')
