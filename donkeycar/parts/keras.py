@@ -105,8 +105,8 @@ class KerasCategoricalLinearSpeed(KerasPilot):
         # TODO(r7vme): Make this configurable.
         if throttle <= 0.3:
             throttle == 0.3
-        if throttle >= 0.6:
-            throttle == 0.6
+        if throttle >= 0.8:
+            throttle == 0.8
         return throttle
     
     

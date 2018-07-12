@@ -97,6 +97,9 @@ class SteeringServer(object):
             if self.image_part is not None:
                 image_array = self.image_part.run(image_array)
 
+            # TODO i have no idea why image_part does not pass.
+            image_array = np.delete(image_array, np.s_[0:42:], axis=0)
+
             # forward pass - inference
             steering, throttle = self.kpart.run(image_array)
 
