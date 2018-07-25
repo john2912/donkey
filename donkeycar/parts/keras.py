@@ -103,10 +103,11 @@ class KerasCategoricalLinearSpeed(KerasPilot):
     def compute_throttle(self, angle_binned):
         throttle = 1 - abs(angle_binned)
         # TODO(r7vme): Make this configurable.
-        if throttle <= 0.3:
-            throttle == 0.3
-        if throttle >= 0.8:
-            throttle == 0.8
+        if throttle <= 0.5:
+            throttle = 0.5
+        if throttle >= 0.6:
+            throttle = 0.6
+        print('throttle', throttle)
         return throttle
     
     
